@@ -56,13 +56,13 @@ class TextClean(object):
 
     @classmethod
     def remove_special_characters(cls, text):
-        text = re.sub("[^a-zA-Z0-9\s]", ' ', text)
-        text = re.sub("XX+",' ', text)
+        text = re.sub(r"[^a-zA-Z]", ' ', text)
+        text = re.sub(r"XX+",' ', text)
         return text
 
     @classmethod
     def remove_weblinks(cls, text):
-        text = re.sub('http\S+|www\S+', ' ', text)
+        text = re.sub(r'http\S+|www\S+', ' ', text)
         return text
 
     def fit_transform(self, corpus, html_stripping=True, contraction_expansion=True,
