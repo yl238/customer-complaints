@@ -4,7 +4,7 @@ import numpy as np
 import networkx as nx
 from sklearn.metrics.pairwise import cosine_similarity
 
-def gen_sent_vectors(clean_sentences):
+def gen_sent_vectors(clean_sentences, word_embeddings):
     """
     Generate sentence vectors using word embeddings.
     """
@@ -43,7 +43,7 @@ def rank_sentences(sim_mat, one_complaint, maxlen):
     return ranked_sentences
 
 
-def gen_top_n_sentences(one_complaint, clean_sentences, maxlen=5):
+def gen_top_n_sentences(one_complaint, clean_sentences, word_embeddings, maxlen=5):
     """
     Get the top n most relevant sentences of each of the complaints.
     This is done by using the TextRank algorithm, in the same spirit
@@ -53,7 +53,7 @@ def gen_top_n_sentences(one_complaint, clean_sentences, maxlen=5):
     if len(one_complaint) < maxlen:
         condensed = ' '.join(one_complaint)
     else:
-        sentence_vectors = gen_sent_vectors(clean_sentences)
+        sentence_vectors = gen_sent_vectors(clean_sentences, word_embeddings)
    
         sim_mat = compute_similarity_matrix(one_complaint, sentence_vectors)
         ranked_sentences = rank_sentences(sim_mat, one_complaint, maxlen)
