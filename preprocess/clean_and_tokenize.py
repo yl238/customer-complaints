@@ -37,10 +37,11 @@ def clean_text(doc):
     special = re.compile(r'http\S+|www\S+|[^a-zA-Z ]+|xx+')
     remove_list = ["american express", "wells fargo", "fargo", "bank of america", 
                "bank america", "ocwen", "equifax", "morgan", "chase", "citibank", 
-               "navient", "nationstar", "capital", "citi", "amex", "capital one", "synchrony", "costco",]
+               "navient", "nationstar", "capital", "citi", "amex", "capital one", "synchrony", "costco",
+               "hsbc", "derbyshire",]
     remove = '|'.join(remove_list)
     pattern = re.compile(r'\b('+remove+r')\b', flags=re.IGNORECASE)
-    doc = pattern.sub('', special.sub('', decontracted))
+    doc = pattern.sub('', special.sub(' ', decontracted))
     
     return doc
 
@@ -48,9 +49,15 @@ def clean_text(doc):
 def tokenize(sentences):
     for doc in nlp.pipe(sentences, disable=['tagger', 'parser']):
         # return ' '.join(' '.join(token.lemma_ if token.lemma_ not in ['-PRON-'] and not token.is_stop else '' for token in doc).split())
-        yield ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())
+        return ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())
     
 
+def clean_and_tokenize_one(doc):
+    doc = clean_text(doc)
+    doc = nlp(doc, disable=['tagger', 'parser'])
+    return ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())
+    
+    
 def clean_and_tokenize(sentences):
     """Remove all weblinks, the XXX anonymiser and any non-alphabetic characters (except spaces)"""
     special = re.compile(r'http\S+|www\S+|[^a-zA-Z ]+|xx+')
