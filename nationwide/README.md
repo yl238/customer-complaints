@@ -4,7 +4,7 @@ This directory consists of scripts to
 2. predict the topics of complaints from Trustpilot.
 
 ### Description of the files
-#### [input](https://github.com/yusueliu/customer-complaints/tree/master/nationwide/input)
+#### Input
 - `lda_45_topics.pkl` The LDA model is trained on the [CFPB (Bureau of Consumer Financial Protection) data](https://catalog.data.gov/dataset/consumer-complaint-database) with 45 topics. Also contains the word vectors obtained using scikit-learn's `Countvectorizer` with `ngrams=(1,2)`
 - `topics_matching.xlsx` LDA topic indices matched with the hand-labeled topic names.
 - `Nationwide_complaints.csv` Complaints about Nationwide Building Society on Trustpilot.
