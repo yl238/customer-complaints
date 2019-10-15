@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     topic_map = gen_topic_map('topics_matching.xlsx')
     
-    complaints_df = pd.read_csv('input/Nationwide_complaints.csv', index_col='Unnamed: 0')
+    complaints_df = pd.read_csv('../scraper/complains_full.csv', index_col='Unnamed: 0')
     
     output = predict_complaint_topics(lda_model, vectorizer, complaints_df, 
                                text_field = 'compliant_text_cleaned',
@@ -91,5 +91,5 @@ if __name__ == '__main__':
     
     # Save topics to json file
     import json
-    with open('output/nationwide_identified_topics.json', 'w') as fout:
+    with open('output/all_identified_topics.json', 'w') as fout:
         json.dump(output, fout)
