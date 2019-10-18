@@ -1,3 +1,5 @@
+*.co.uk/
+*.com/
 data/
 .vscode/
 .idea/
