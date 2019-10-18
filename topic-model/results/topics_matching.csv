@@ -1,0 +1,56 @@
+﻿ID,Top 10 words from topic,Summarized Topic Name
+0,"loan,student,student loan,payment,pay,plan,repayment,year,school,program",Student Loans
+1,"address,email,receive,mail,send,return,notice,item,order,contact",Communications with company
+2,"company,tell,credit,sign,loan,say,contact,contract,get,call",Signing contracts
+3,"letter,send,receive,state,request,receive letter,send letter,mail,copy,write",Communications via written letters
+4,"report,credit,information,credit report,experian,bureau,inaccurate,credit bureau,information credit,agency",Inaccurate credit report information
+5,"bank,check,account,money,fund,deposit,branch,day,transfer,check account",Access to bank account
+6,"Verify,account,provide,fcra,delete,proof,section,report,original, law",Verification of accounts
+7,"Account,date,numb,open,address,account numb,creditor,report,balance,collection",Finding out account details
+8,"mortgage,home,loan,house,refinance,year,pay,sell,mortgage company,mortgage payment",Taking out or refinancing mortgage 
+9,"credit,card,credit card,apply,year,application,card account,bank,line,card company",Credit card account
+10,"report,credit,credit report,remove,account,dispute,bureau,transunion,credit bureau,show",Dispute/remove credit report information
+11,"pay,money,discover,dollar,say,go,take,card,tell,month",Issues with payments
+12,"loan,modification,mortgage,foreclosure,loan modification,document,request,application,home,process",Mortgage loan modifications
+13,"Bill,collection,pay,agency,collection agency, medical,send,receive,service,pay bill",Bill collection
+14,"service,customer,customer service, representative, information, speak,provide,request,contact,issue",Customer service
+15,"escrow,mortgage,taxis,paypal,tax,pay,refund,account,receive,ditech",ESCROW
+16,"offer,point,receive,account,bonus,open,term,meet,reward,requirement",Terms and conditions of accounts
+17,"score,credit score, credit, alert,access,drop,usaa,point,information,mr",Credit scoring
+18,"late,report,day,payment,bankruptcy,late payment,credit,day late,account,credit report",Late payments and bankruptcies
+19,"charge,fee,late,late fee,statement,pay,month,receive,account,credit",Late payment fees and charges
+20,"interest,rate,balance,credit,interest rate,high,pay,limit,purchase,",Interest rates
+,minimum,
+21,"close,sale,property,home,short,short sale,process,appraisal,day,",Closing home sales
+,house,
+22,"debt,collection,allege,practice,collector,claim,debt collection,act,",Debt collection practices
+,"debt collector,fair",
+23,"payment,account,history,credit,status,current,payment history,month,",Payment status or history
+,"miss,update",
+24,"inquiry,credit,report,hard,credit report,pull,hard inquiry,remove,",Credit report inquiries
+,"authorize,inquiry credit",
+25,"call,phone,time,numb,tell,day,receive,phone call,ask,message",Communication by phone
+26,"security,information,social,social security,numb,personal,datum,",Social security and personal information
+,"security numb,breach,personal information",
+27,"Account,debt,dispute,request,send,report,validation,provide,",Dispute debts
+,"credit,validate",
+28,"Complaint,file,document,court,case,response,cfpb,attach,attorney,",Legal complaints
+,state,
+29,"account,close,open,close account,account close,new,open account,account open,tell,check",Opening or closing account
+30,"year,help,time,try,work,go,know,not,get,need",Customer support 
+31,"state,note,law,document,property,loan,service,fraud,record,trust",Legal documents
+32,"fee,account,transaction,bank,overdraft,charge,overdraft fee,balance,",Overdraft balance and fees 
+,"debit,td",
+33,"consumer,information,agency,report,report agency,block,consumer report,section,dispute,shall",Consumer information agencies
+34,"identity,report,theft,fraudulent,identity theft,account,police,fraud,victim,police report",Fraud and identity theft
+35,"insurance,policy,protection,consumer,financial,union,company,insurance company,claim,consumer financial",Insurance and customer protections
+36,"car,vehicle,finance,lease,auto,loan,financial,purchase,pay,ally",Auto loans/leases
+37,"violation,act,fair,inc,credit,report,violate,texas,fair credit,report act",Violation of rights
+38,"account,pay,balance,bank,state,settlement,account pay,owe,settle,",Settlement of account balance
+,payment,
+39,"say,tell,ask,call,speak,information,state,contact,know,not",Contacting company
+40,"inquiry,unauthorized,credit,request,authorize,wage,follow,garnish,report,remove",Unauthorized credit inquiry / report 
+41,"loan,payment,interest,pay,principal,monthly,apply,month,year,balance",Interests rates
+42,"card,charge,transaction,claim,tell,dispute,fraud,purchase,call,day",Fraudulent transaction 
+43,"payment,month,late,tell,pay,day,time,call,receive,date",Information about late payments
+44,"debt,owe,collection,collect,credit,company,report,recovery,collect debt,attempt",Attempt to collect debts 
