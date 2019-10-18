@@ -42,28 +42,20 @@ def clean_text(doc):
     remove_list = ["american express", "wells fargo", "fargo", "bank of america", 
                    "bank america", "ocwen", "equifax", "morgan", "chase", "citibank", 
                    "navient", "nationstar", "capital", "citi", "amex", "capital one", "synchrony", "costco",
-                   "hsbc", "derbyshire", "hey", "oh", "gone",
+                   "hsbc", "derbyshire", "hey", "oh", "gone", 'transunion'
                    "asknationwide", "nationwide", "twitter", "hi", "yes", "yep", "have",
                    "going", "be", "sorry", "hello", "thanks", "thank", "okay", "ok", "get", "to", "no", "not",]
     remove = '|'.join(remove_list)
     pattern = re.compile(r'\b('+remove+r')\b', flags=re.IGNORECASE)
     doc = pattern.sub('', special.sub(' ', decontracted))
-    
-    
+        
     return doc
 
-
-def tokenize(sentences):
-    for doc in nlp.pipe(sentences, disable=['tagger', 'parser']):
-        # return ' '.join(' '.join(token.lemma_ if token.lemma_ not in ['-PRON-'] and not token.is_stop else '' for token in doc).split())
-        return ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())
-    
 
 def clean_and_tokenize_one(doc):
     doc = clean_text(doc)
     doc = nlp(doc, disable=['tagger', 'parser'])
-    doc = ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())
-    
+    doc = ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())    
     return doc
     
     
@@ -89,9 +81,9 @@ if __name__ == '__main__':
     
     sentences = tokenize_sentences(df['Consumer complaint narrative'])
     
-    clean_sentence_tokenized = tokenize_and_clean(sentences)
+    clean_sentence_tokenized = clean_and_tokenize(sentences)
     
-    df['clean_tokenized'] = clean_sentences
+    df['clean_tokenized'] = clean_sentence_tokenized
     usecols = ['Complaint ID', 'Product', 'Issue', 'Consumer complaint narrative',
               'clean_tokenized']
     df[usecols].to_csv('../data/with_tokenized.csv', index=False)
