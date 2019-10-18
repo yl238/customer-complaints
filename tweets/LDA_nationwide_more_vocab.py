@@ -59,10 +59,10 @@ def clean_doc(doc):
     pattern = re.compile('@\S+|http\S+|pic.\S+|www\S+|\w*\d\w*|\s*[^\w\s]\S*')
     return pattern.sub('', doc).strip()
     
-def gen_model_data(all_tweets):
+def gen_model_data(all_tweets, username, valid_cols):
     """Remove all Nationwide and short tweets, remove tweet related extra symbols"""
-    length_filter = ((all_tweets.username != 'asknationwide') & (all_tweets.tweet.str.len()>14))|(all_tweets.username == 'asknationwide')
-    valid_cols = ['id', 'conversation_id', 'created_at', 'user_id', 'tweet']
+    length_filter = ((all_tweets.username != username) & (all_tweets.tweet.str.len()>14))|(all_tweets.username == username)
+    
     model_df = all_tweets[length_filter][valid_cols]
     model_df['cleaned'] = model_df['tweet'].apply(clean_doc).apply(lambda x: None if len(x) < 10 else x)
     valid_df = model_df.dropna(subset=['cleaned'])
@@ -72,6 +72,9 @@ if __name__ == '__main__':
     file = 'data/to_nationwide.csv'
     all_tweets = pd.read_csv(file)
 
+    username = 'asknationwide'
+    valid_cols = ['id', 'conversation_id', 'created_at', 'user_id', 'tweet']
+    
     valid_df = gen_model_data(all_tweets)
     valid_df = add_lemmatized_data(valid_df)
     

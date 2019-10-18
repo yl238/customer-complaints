@@ -51,38 +51,3 @@ if __name__ == '__main__':
     subset['cleaned_summarized'] = cleaned_summarized
     
     subset.to_csv('../data/mortgage_with_summaries.csv', index=False)
-    
-    
-    # LDA
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 1))
-    
-    X = vectorizer.fit_transform(subset['cleaned_summarized'])
-    from sklearn.decomposition import LatentDirichletAllocation
-    from sklearn.model_selection import GridSearchCV
-
-    search_params = {'n_components': [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]}
-
-    # Init the model
-    lda = LatentDirichletAllocation(random_state=42)
-
-    # Init Grid Search Class
-    model = GridSearchCV(lda, param_grid=search_params)
-
-    # Do the Grid Search
-    model.fit(X)
-    
-    best_lda_model = model.best_estimator_
-
-    # Model parameters
-    print("Best model's parameters: {}".format(model.best_params_))
-
-    # Log likelihood score
-    print("Best log-likelihood score: {}".format(model.best_score_))
-
-    # Perplexity
-    print("Model perplexity: {}".format(best_lda_model.perplexity(X)))
-    
-    data = {'model': best_lda_model, 'vectorizer': vectorizer}
-    with open('../output/mortgage_lda_model.pickle', 'wb') as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
