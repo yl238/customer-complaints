@@ -1,0 +1,36 @@
+/*canvas-*/
+
+body {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+}
+.dc-chart g.debug rect {
+    fill: blue;
+    fill-opacity: .2;
+}
+.dc-chart g.row rect {
+    fill-opacity: 0.8;
+    cursor: pointer;
+}
+.dc-chart g.row rect:hover {
+    fill-opacity: 0.6;
+}
+.dc-chart g.row text {
+    fill: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+.dc-legend {
+    font-size: 11px;
+}
+.dc-legend-item {
+    cursor: pointer;
+}
+.dc-chart g.axis text {
+    /* Makes it so the user can't accidentally click and select text that is meant as a label only */
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10 */
+    -o-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
