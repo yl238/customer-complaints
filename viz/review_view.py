@@ -11,9 +11,10 @@ import json
 from collections import defaultdict
 import pickle
 import re
+#from preprocess.clean_and_tokenize import clean_and_tokenize_one
 
 # only scored for nationwide right now.
-suedat = json.load(open('./data/identified_topics.json','r'))
+suedat = json.load(open('../example/output/nationwide_identified_topics.json','r'))
 
 def colour_by_score(message,scores):
     scaled_score = (scores+1)/2
@@ -21,15 +22,27 @@ def colour_by_score(message,scores):
     output =     "<span style='background-color:rgba"+str(tuple(map(lambda x:int(x*255),cm.RdYlGn(scaled_score))))+";'>"+message+'</span>'
     return output
 
-topics = pd.read_excel('./data/topics_matching.xlsx').dropna()
-complaints = pd.read_csv("./data/complaints_full.csv",index_col=0)
-model = pickle.load(open('./data/lda_issues_45_topics.pkl','rb'))
-vectorizer = pickle.load(open('./data/vectorizer.pkl','rb'))
-tokens = pickle.load(open('./data/token_dump.pkl','rb'))
+topics = pd.read_excel('../example/input/topics_matching.xlsx').dropna()
+complaints = pd.read_csv("../scraper/complaints_full.csv",index_col=0)
+
+with open('../example/input/lda_45_topics.pkl', 'rb') as f:
+        data = pickle.load(f)
+model = data['model']
+vectorizer = data['vectorizer']
+
+#text_field = 'compliant_text_cleaned'
+#complaints['cleaned'] = complaints[text_field].astype(str).apply(clean_and_tokenize_one)
+
+#vectorized = vectorizer.transform(complaints['cleaned'])
+#topics = model.transform(vectorized)
+tokens = vectorizer.get_feature_names()
+
+#model = pickle.load(open('./example/input/lda_45_topics.pkl','rb'))
+#vectorizer = pickle.load(open('./data/vectorizer.pkl','rb'))
+#tokens = pickle.load(open('./data/token_dump.pkl','rb'))
 
 
 complaints['html'] = None
-
 
 
 def token_to_words(vector):
@@ -82,8 +95,9 @@ def profile(id):
     topresults = pd.DataFrame.from_dict(suedat[caseindex]['topics'])
     lda_topics = defaultdict(dict)
     for i in range(0,5):
-        topic_index = topresults[str(i)]['topic_idx']
-        lda_topics[i]['topic_idx'] = topresults[str(i)]['topic_idx']
+        #topic_index = topresults[str(i)]['topic_idx']
+        topic_index = i #topresults[str(i)]
+        #lda_topics[i]['topic_idx'] = topresults[str(i)]['topic_idx']
         lda_topics[i]['topic_name'] = topresults[str(i)]['topic_name']
         lda_topics[i]['topic_prob'] = np.round(topresults[str(i)]['topic_prob'],2)
         lda_topics[i]['width'] = np.round(topresults[str(i)]['topic_prob'],2)*100
