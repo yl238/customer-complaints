@@ -35,7 +35,7 @@ We make the text as clean as possible, using regex and spaCy to clean and prepro
 #### Vector Representation of Sentences
 Embed the sentences using GloVe (Global Vector) embeddings. We use the pre-trained `Wikipedia2014 + Gigaword 5` GloVe vectors.
 
-![image.png](figures/glove.png)
+<img src="figures/glove.png" width="800px">
 
 Original paper: [http://www.aclweb.org/anthology/D14-1162](http://www.aclweb.org/anthology/D14-1162)
 
@@ -44,7 +44,7 @@ We have word vectors for 400,000 different terms stored in the dictionary of wor
 #### Similarity Matrix Preparation
 The next step is to find similarities between the sentences, and we will use the cosin similarity approach. Let's create an empty similarity matrix and populate it with cosin similarities of the sentences. In case you've forgotten, cosine similarity is defined by the following:
 
-<img src="figures/cosine_similarity.png" width='300px'>
+<img src="figures/cosine_similarity.png" width='600px'>
 
 #### Applying the PageRank Algorithm
 Convert the similarity matrix into a grph using networkX:
