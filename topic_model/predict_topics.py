@@ -50,7 +50,8 @@ def predict_complaint_topics(lda_model, vectorizer, complaints_df,
         return
     
     # Clean complaints text prior to prediction
-    complaints_df['cleaned'] = complaints_df[text_field].apply(clean_and_tokenize_one)
+    complaints_df['cleaned'] = complaints_df[text_field].apply(
+        clean_and_tokenize_one)
 
     # Apply Countvectorizer transform and then LDA predict
     vectorized = vectorizer.transform(complaints_df['cleaned'])
@@ -65,7 +66,8 @@ def predict_complaint_topics(lda_model, vectorizer, complaints_df,
         topic_prob = np.sort(topics[i, :])[::-1]
     
         topics_data = {}
-        for importance_count, [idx, prob] in enumerate(list(zip(topic_indices, topic_prob))[:top_n]):
+        for importance_count, [idx, prob] in enumerate(
+                list(zip(topic_indices, topic_prob))[:top_n]):
             topics_data[importance_count] = {'topic_name': topic_map[int(idx)],
                                              'topic_prob': prob}
         output['topics'] = topics_data

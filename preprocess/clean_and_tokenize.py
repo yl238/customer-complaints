@@ -54,7 +54,7 @@ def clean_text(doc):
 
 def clean_and_tokenize_one(doc):
     doc = clean_text(doc)
-    doc = nlp(doc, disable=['tagger', 'parser'])
+    doc = nlp(doc, disable=['tagger', 'parser', 'ner'])
     doc = ' '.join(' '.join(token.lemma_ if not token.is_stop else '' for token in doc).split())    
     return doc
     
