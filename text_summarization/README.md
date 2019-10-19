@@ -35,7 +35,7 @@ We make the text as clean as possible, using regex and spaCy to clean and prepro
 #### Vector Representation of Sentences
 Embed the sentences using GloVe (Global Vector) embeddings. We use the pre-trained `Wikipedia2014 + Gigaword 5` GloVe vectors.
 
-<img src="figures/glove.png" width="800px">
+<img src="figures/glove.png" width="600px">
 
 Original paper: [http://www.aclweb.org/anthology/D14-1162](http://www.aclweb.org/anthology/D14-1162)
 
