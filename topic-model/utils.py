@@ -15,7 +15,7 @@ def gen_model_data(all_tweets, username, valid_cols):
     
     model_df = all_tweets[length_filter][valid_cols]
 
-    model_df['lemmatized'] = clean_and_lemmatize(model_df['tweets'])
+    model_df['lemmatized'] = clean_and_lemmatize(model_df['tweet'])
     model_df['lemmatized'] = model_df['lemmatized'].apply(lambda x: 
             None if len(x) < 10 else x)
     valid_df = model_df.dropna(subset=['lemmatized'])
