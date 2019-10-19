@@ -14,7 +14,7 @@ module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
     
-from utils import gen_model_data, build_lda_model
+from topic_model.lda_utils import gen_model_data, build_lda_model
 
 
 if __name__ == '__main__':
