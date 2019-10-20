@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import pickle
 import os, sys
+import logging
+import argparse
 
 from io import StringIO
 from pandas.api.types import is_string_dtype
@@ -13,7 +15,7 @@ if module_path not in sys.path:
     sys.path.append(module_path)
     
 from preprocess.clean_and_tokenize import clean_and_tokenize_one
-from scripts.predict_topics import gen_topic_map, predict_complaint_topics
+from topic_model.predict_topics import gen_topic_map, predict_complaint_topics
 
 
 def get_engine(con_string):
@@ -53,17 +55,36 @@ def to_postgres(df, table_name, con, text_cols=None):
 
 
 if __name__ == '__main__':
-    trustpilot_data = '../scraper/trustpilot/trustpilot_complaints_full.csv'
-    df = pd.read_csv(trustpilot_data)
+    trustpilot_data = 'data/trustpilot/trustpilot_complaints_full.csv'
+    output_file = 'results/trustpilot_complaint_topics.csv'
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input_path', type=str, default=trustpilot_data)
+    parser.add_argument('--output_path', type=str, default=output_file)
+    parser.add_argument('--save_to_db', type=bool, default=False)
+    args = parser.parse_args()
+
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
+    input_file = args.input_path
+    output_file = args.output_path
+    save_to_db = args.save_to_db
+    
+    logger.info('Reading file from {}...'.format(input_file))
+    df = pd.read_csv(input_file)
 
     df['date'] = pd.to_datetime(df['date_time'])
 
-
+    logger.info('Load LDA models...')
     with open('./models/lda_45_topics.pkl', 'rb') as f:
         data = pickle.load(f)
     lda_model = data['model']
     vectorizer = data['vectorizer']
 
+    logger.info('Get complaint topics...')
     text_field = 'compliant_text_cleaned'
     df['cleaned'] = df[text_field].astype(str).apply(clean_and_tokenize_one)
     # Apply Countvectorizer transform and then LDA predict
@@ -95,18 +116,22 @@ if __name__ == '__main__':
 
     output_df = pd.DataFrame.from_records(all_output)
 
-    
-    # Save to postgres database
-    with open("/Users/sueliu/cred.secret", 'r') as f:
-        con_str = f.read().strip()
+    if save_to_db: 
+        logger.info('Save to database...')   
+        # Save to postgres database
+        with open("/Users/sueliu/cred.secret", 'r') as f:
+            con_str = f.read().strip()
 
-    # Save topic names
-    topic_map_df = pd.DataFrame(topic_map, index=[0]).T.reset_index()
-    topic_map_df.columns=['topic_id', 'topic_name']
-    to_postgres(topic_map_df,'prototyping.complaints_topic_names',\
-         create_engine(con_str))
+        # Save topic names
+        topic_map_df = pd.DataFrame(topic_map, index=[0]).T.reset_index()
+        topic_map_df.columns=['topic_id', 'topic_name']
+        to_postgres(topic_map_df,'prototyping.complaints_topic_names',\
+            create_engine(con_str))
 
-    # Save complaints and topic assignment
-    pd.io.sql.get_schema(output_df, 'prototyping.complaints_trustpilot')
-    to_postgres(output_df, 'prototyping.complaints_trustpilot', get_engine(con_str),\
-        text_cols=['review_title', 'review_narrative'])
+        # Save complaints and topic assignment
+        pd.io.sql.get_schema(output_df, 'prototyping.complaints_trustpilot')
+        to_postgres(output_df, 'prototyping.complaints_trustpilot', get_engine(con_str),\
+            text_cols=['review_title', 'review_narrative'])
+    else:
+        print('Save output to {}'.format(output_file))
+        output_df.to_csv(output_file, index=False)
