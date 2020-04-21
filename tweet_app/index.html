@@ -1,0 +1,376 @@
+<html><head>
+  <meta charset="utf-8">
+
+  <title> @AskNationwide Dashboard</title>
+
+  <script src="js/d3.v3.js"></script>
+  <script type="text/javascript" src="js/dc.min.js"></script>
+  <script type="text/javascript" src="js/crossfilter.min.js"></script>
+  <script src="js/jquery.js"></script>
+  
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="css/dc.css">
+  <script src="js/d3.layout.cloud.js"></script>
+  <script src="js/d3.wordcloud.js"></script>
+  <script src="js/cloud.min.js"></script>
+
+
+  <link rel="stylesheet" type="text/css" href="css/twitter.css">
+  <link rel="stylesheet" href="css/animate.css">
+    <style>
+    h4 {
+      font-size:16px;
+      font-weight:normal;
+      margin-left: 30px ! important;
+            /*.margins({top: 0, left: 30, right: 10, bottom: 20})*/
+      }
+    h3 {
+      font-size:20px;
+      font-weight:normal;
+      margin-left: 30px ! important;
+      }  
+    h2 {
+      font-size: 50px;
+      line-height: inherit;
+    }
+    h2 span {
+      font-size:14px;
+      font-weight:normal;
+      text-transform: none;
+    }
+    body{
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+  </style>
+</head>
+
+<body style="">
+
+  
+  <div id="canvas-svg">
+    <div class ="container" style="margin-left:100px;font: 12px";>  
+      <div class="dc-data-count">
+      <h2 class='animated tada'> <span style='color:#ee1b24;font-size: 50px;line-height: inherit;'>@Ask</span><span style='color:#004a8f;font-size: 50px;line-height: inherit;'>Nationwide</span> Dashboard
+      </h2>
+      <span>
+        All records selected. Please click on the graph to apply filters. |
+        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+      </span>
+    </div>
+    </div>
+
+
+    <div class="row" style="padding-left:5%;">
+        
+      <div class='.col-sm-6' id='day-of-week-chart'>
+          <h3>
+              <b>Tweets in Day of Week </b>
+                <p class="muted">Select day to filter</p> 
+          </h3>
+      </div>
+      
+      <div class='.col-sm-8' id='tweets-bar-chart'>
+          <h3>
+              <b>Tweets</b>
+                <p class="muted">Drag to filter by time</p>
+          </h3>
+      </div>
+    </div>
+
+    
+
+      <div class="row" style="padding-left:5%;">
+          <div class="chart-group">
+      
+              <div class=".col-sm-4" id="sentiment-line-chart">
+                  <h3>Sentiment</h3>
+              </div>
+       
+      
+               <div class=".col-sm-4" id="vader_sentiment-line-chart">
+                   <h3>VADER Sentiment</h3>
+               </div>
+        
+               <div class=".col-sm-4" id='wordcloud'></div>
+        
+         </div>
+    </div>
+
+         
+
+
+    
+ 
+
+ 
+
+  <table class="table table-hover dc-data-table" style='width:90%;margin-left:5%'>
+      <thead>
+      <tr class="header">
+          <th>Tweet</th>
+          <th>Sentiment</th>
+          <th>VADER Sentiment</th>
+          <th>Replies</th>
+          <th>Retweets</th>
+          <th>Likes</th>
+      </tr>
+      </thead>
+  </table>
+</div>
+
+<script>
+    d3.csv("data/my_tweets.csv", function(error, data) {
+  drawD3Document(data);
+
+function drawD3Document (data) {
+  var WIDTH = 480, HEIGHT = 150;
+
+  var svg = d3.select("#canvas-svg");
+  
+  var chartColors = d3.scale.category20();
+  var chartCount = 0;
+
+  // since its a csv file we need to format the data a bit
+  var dateFormat = d3.time.format("%Y-%m-%d %H:%M:%S");
+
+  data.forEach(function(e) {
+    e.dd = new Date(dateFormat.parse(e.time).setHours(0,0,0,0));
+  });
+
+  var data_range = d3.extent(data, function(d) {
+    return d.dd;
+  });
+
+  // feed it through crossfilter
+  var ndx = crossfilter(data);
+  var all = ndx.groupAll();
+
+  var dateDim = ndx.dimension(function (d) {
+    return d.dd;
+  });
+
+  var tweetsGroupByDate = dateDim.group().reduceSum(function(d) {
+    return 1;
+  });
+  
+  var x_domain = d3.extent(data, function(d) {
+    return d.dd;
+  });
+
+  var x_scale = d3.time.scale();
+
+  x_scale.domain(x_domain);
+
+  var volumeChart = dc.barChart("#" + "tweets" + "-bar-chart");
+  
+  // draw tweet timeline chart
+  volumeChart
+    .width(WIDTH + 100)
+    .height(HEIGHT + 30)
+    .x(d3.time.scale().domain([new Date(1985, 0, 1), Date.now()]))
+    .yAxisLabel("")
+    .centerBar(true)
+    .dimension(dateDim)
+    .alwaysUseRounding(true)
+    .group(tweetsGroupByDate);
+  
+  volumeChart.elasticX(true);
+  volumeChart.xAxisPadding(1);
+  volumeChart.xAxis().tickFormat(d3.time.format("%b %y"));
+  volumeChart.yAxis().tickFormat(d3.format("d"));
+  volumeChart.render();
+  
+  var lineCharts = [];  
+  var sentimentChart = drawLineChart(data, "sentiment", "float");
+  lineCharts.push(sentimentChart);
+  
+  var vader_sentimentChart = drawLineChart(data, "vader_sentiment", "float");
+  lineCharts.push(vader_sentimentChart);
+  
+ 
+
+  
+  volumeChart.on("filtered", function (chart) {
+        var fdata = volumeChart.dimension().top(Infinity);
+        analyzeTopics(fdata);
+        dc.events.trigger(function () {
+          for (var i = 0; i < lineCharts.length; i++) {
+            lineCharts[i].focus(chart.filter());
+            lineCharts[i].focus(chart.filter());
+          }
+          dc.redrawAll(chart.chartGroup());
+          
+          
+        });
+    });
+  
+  // day of week
+  // counts per weekday
+  var dayOfWeek = ndx.dimension(function (d) {
+      var day = d.dd.getDay();
+      var name=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      return day+"."+name[day];
+  });
+  var dayOfWeekGroup = dayOfWeek.group();
+  
+  var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
+  dayOfWeekChart.width(380)
+      .height(180)
+      .margins({top: 0, left: 30, right: 10, bottom: 30})
+      .group(dayOfWeekGroup)
+      .dimension(dayOfWeek)
+      .on("filtered", function() {
+        var fdata = dayOfWeekChart.dimension().top(Infinity);
+        analyzeTopics(fdata);
+      })
+      // assign colors to each value in the x scale domain
+      .ordinalColors(d3.scale.category20().range())
+      .label(function (d) {
+          return d.key.split(".")[1];
+      })
+      // title sets the row text
+      .title(function (d) {
+          return d.value;
+      })
+      .elasticX(true)
+      .xAxis().ticks(4)
+  dayOfWeekChart.xAxis().tickFormat(d3.format("d"));
+  dayOfWeekChart.labelOffsetY(13);
+  dayOfWeekChart.render();
+  
+  // count
+  dc.dataCount(".dc-data-count")
+    .dimension(ndx)
+    .group(all)
+    // (optional) html, for setting different html for some records and all records.
+    // .html replaces everything in the anchor with the html given using the following function.
+    // %filter-count and %total-count are replaced with the values obtained.
+    .html({
+        some:"<h2><span style='color:#ee1b24;font-size: 50px;line-height: inherit;'>@Ask</span><span style='color:#004a8f;font-size: 50px;line-height: inherit;'>Nationwide</span> Dashboard</h2><strong class='animated flip' style='color:#337ab7'>%filter-count</strong> selected out of <strong class='animated flip' style='color:#337ab7'>%total-count</strong> records | <a href='javascript:dc.filterAll(); dc.renderAll();''>Reset All</a>",
+        all:"<h2><span style='color:#ee1b24;font-size: 50px;line-height: inherit;'>@Ask</span><span style='color:#004a8f;font-size: 50px;line-height: inherit;'>Nationwide</span> Dashboard</h2>All records selected. Please click on the graph to apply filters."
+    });
+  
+  // data table
+  dc.dataTable(".dc-data-table")
+      .dimension(dateDim)
+      // data table does not use crossfilter group but rather a closure
+      // as a grouping function
+      .group(function (d) {
+          return d3.time.format("%Y-%m-%d")(d.dd);
+      })
+      .size(1500) // (optional) max number of records to be shown, :default = 25
+      // dynamic columns creation using an array of closures
+      .columns([
+          function (d) {
+              return d["Tweet text"]
+          },
+          function (d) {
+              return d.sentiment;
+          },
+          function (d) {
+              return d.vader_sentiment;
+          },
+          function (d) {
+              return d.replies_count;
+          },
+          function (d) {
+              return d.retweets_count;
+          },
+          function (d) {
+              return d.likes_count;
+          }
+      ])
+      // (optional) sort using the given field, :default = function(d){return d;}
+      .sortBy(function (d) {
+          return d.dd;
+      })
+      // (optional) sort order, :default ascending
+      .order(d3.ascending)
+      // (optional) custom renderlet to post-process chart using D3
+      .renderlet(function (table) {
+          table.selectAll(".dc-table-group").classed("info", true);
+      })
+      .render();
+  
+  function drawLineChart(data, field, format) {
+    var dateGroup = dateDim.group().reduceSum(function(d) {
+      return +d[field];
+    });
+
+    var chart = dc.lineChart("#" + field.replace(/ /g, "-") + "-line-chart");
+    // impressions chart
+    chart
+      .renderArea(true)
+      .width(WIDTH)
+      .height(HEIGHT+50)
+      .x(x_scale)
+      .brushOn(false)
+      .yAxisLabel("")
+      .dimension(dateDim)
+      .group(dateGroup)
+      .elasticY(true)
+      .colors([chartColors.range()[chartCount]]);
+    chart.xAxis().tickFormat(d3.time.format("%b %d"));
+    if (format === "percent") {
+      chart.yAxis().tickFormat(function(v) {return v + "%";});
+    } else if (format === "integer") {
+      chart.yAxis().tickFormat(d3.format("d"));
+    }
+    
+    chart.renderTitle(true);
+    chart.title(function(p) {
+        return d3.time.format("%b %d, %Y")(p.key)
+            + "\n"
+            + "Value: " + p.value;
+    });
+
+    chart.render();
+
+    chartCount++;
+    
+    return chart;
+  }
+  
+  };
+  
+
+  
+// I don't think this does anything
+ 
+  function analyzeTopics(tweetData) {
+  var postData = [[], 1];
+  var all_tweets = [];
+  var all_the_tweets = ''
+  document.querySelectorAll(".dc-table-column._0").forEach(function(x){all_tweets.push(x.innerHTML);});
+  all_the_tweets = all_tweets.join(' , ');
+  parsedtext = parseText(all_the_tweets).slice(0, 50);
+  console.log(document.querySelectorAll("#wordcloud.svg").length)
+  //console.log(parsedtext[3])
+  if (document.querySelectorAll("div#wordcloud")[0].childNodes.length > 0) {
+      document.querySelectorAll("div#wordcloud")[0].childNodes[0].remove();
+   d3.wordcloud()
+  .size([600, 300])
+  .selector('#wordcloud')
+  .words(parsedtext)
+  .start();
+} else
+{   d3.wordcloud()
+  .size([600, 300])
+  .selector('#wordcloud')
+  .words(parsedtext)
+  .start();
+}
+
+
+  }
+  });
+  
+  </script>
+  
+
+  
+
+
+</body></html>
